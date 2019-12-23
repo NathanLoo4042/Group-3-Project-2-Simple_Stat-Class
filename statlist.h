@@ -5,7 +5,7 @@
 #include <iostream>
 #include <utility>
 #include <vector>
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 #include <math.h>
 using namespace std;
 
@@ -19,6 +19,20 @@ template <typename E> class statlist{
     //constructor
     statlist() {
       mean = mode = median = standard_dev = length = total = 0;
+    }
+    
+    //constructor that takes in vector input
+    statlist(vector<E> input){
+      mean = mode = median = standard_dev = length = total = 0;
+      for(int i = 0; i < input.size(); i++)
+        insert(input[i]);      
+    }
+
+    //constructor that takes in array input
+    statlist(E input[]){
+      mean = mode = median = standard_dev = length = total = 0;
+      for(int i = 0; i < sizeof(input)/sizeof(input[0]); i++)
+        insert(input[i]); 
     }
 
     //function to check wheter the number already exists in data
@@ -42,10 +56,10 @@ template <typename E> class statlist{
 
     //function to print out statlist
     void printStat() {
-      cout << "mean: " + mean << endl;
-      cout << "mode: " + mode << endl;
-      cout << "median: " + median << endl;
-      cout << "standard_dev: " + standard_dev << endl;
+      cout << "mean: " << mean << endl;
+      cout << "mode: " << mode << endl;
+      cout << "median: " << median << endl;
+      cout << "standard_dev: " << standard_dev << endl;
     }
 
     //function to print out contents in data
@@ -122,7 +136,6 @@ template <typename E> class statlist{
      
     }
 
-
     //insert
     void insert(const E& it) {
       //if element already exists increment count(pair.second)
@@ -145,7 +158,7 @@ template <typename E> class statlist{
       updateMean();
       updateSD();
     }
-
+    
 };
 
 #endif
