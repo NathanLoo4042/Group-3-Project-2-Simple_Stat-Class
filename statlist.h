@@ -5,16 +5,22 @@
 #include <iostream>
 #include <utility>
 #include <vector>
-#include <bits/stdc++.h>
+// #include <bits/stdc++.h>
+//Unable to build using bits/stdc++.
+//bits/stdc++.h is not in all compilers
 #include <math.h>
+//math.h seems to be on the no-go list
+//On the assignment, in the requirements/restrictions section
+//"You are not allowed to use any C/C++ math libraries"
 using namespace std;
 
 template <typename E> class statlist{
   
   private:
     double mean, mode, median, standard_dev;
+    //length is number of unique elements, total is number of elements
     int length, total;
-    vector<pair< E, int> > data;
+    vector<pair<E, int> > data;
   public:
     //constructor
     statlist() {
@@ -22,17 +28,22 @@ template <typename E> class statlist{
     }
     
     //constructor that takes in vector input
-    statlist(vector<E> input){
+    statlist(vector<E> input) {
       mean = mode = median = standard_dev = length = total = 0;
       for(int i = 0; i < input.size(); i++)
         insert(input[i]);      
     }
 
     //constructor that takes in array input
-    statlist(E input[]){
+    statlist(E input[]) {
       mean = mode = median = standard_dev = length = total = 0;
       for(int i = 0; i < sizeof(input)/sizeof(input[0]); i++)
         insert(input[i]); 
+    }
+
+    //overloading array access operator
+    E &operator[](int index) {
+      return data[index].first;
     }
 
     //function to check wheter the number already exists in data
@@ -43,6 +54,13 @@ template <typename E> class statlist{
       }
       return false;
     }
+
+    // (!) todo: update/modify getIndex to Search
+    // search (fastest possible among the choices what we have
+    // discussed in the class): must return the location of the
+    // first occurrence and repetition. For example, if the first
+    // occurrence of data value 20 is 3  and there are 10 of 20s,
+    // then you must return 3 and 10 as the search result of 20
 
     //function to get index of number that's already in data
     int getIndex(const E& it) {
@@ -91,6 +109,24 @@ template <typename E> class statlist{
       return standard_dev;
     }
 
+    //number of unique elements
+    int length_unique() {
+      return length;
+    }
+
+    //count of all elements
+    int length_total() {
+      return total;
+    }
+
+
+    void updateStats() {
+      updateMean();
+      updateMode();
+      updateMedian();
+      updateSD();
+    }
+
     void updateMean() {
       double sum = 0;
       for(int i = 0; i < length; i++) {
@@ -107,6 +143,23 @@ template <typename E> class statlist{
         }
       }
       mode = data[a].first;
+    }
+
+    void updateMedian() {
+      int half = total / 2;
+      if (total == 0){
+        median = 0;
+      }
+      else if (total % 2 == 0){
+        // If the number is even, the value is the mean of two middle elements
+        median = (data[half].first + data[half - 1].first) / 2;
+      }
+      else
+      {
+        // If the number is odd, the value is the middle element
+        // Integer rounding rounds down and prevents this from getting weird
+        median = data[half].first;
+      }
     }
 
     void updateSD() {
@@ -136,28 +189,30 @@ template <typename E> class statlist{
      
     }
 
+    // todo: rename to append for clarity/speciics of the assignment
+
     //insert
     void insert(const E& it) {
       //if element already exists increment count(pair.second)
       if(exists(it)) {
         int idx = getIndex(it);
         data[idx].second++;
-        total++;
       }
       //if element doesn't exist create a new pair and add into list
-      if(!exists(it)) {
+      else {
         pair<E, int> p(it, 1);
         data.push_back(p);
         length++;
-        total++;
       }
+      total++;
       //sort data by first from least to greatest
       sort(data.begin(),data.end());
       //update statistics
-      updateMode();
-      updateMean();
-      updateSD();
+      updateStats();
     }
+
+    // todo: removen (Remove N number of an element)
+    // todo: empty (Clear entire data set)
     
 };
 
