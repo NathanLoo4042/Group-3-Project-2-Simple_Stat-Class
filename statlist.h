@@ -210,10 +210,15 @@ template <typename E> class statlist{
 
     //helper function to for sqrt, finds biggest perfect square that doesn't go over target number
     int biggestPerfectSquare(double num) {
-      for(int i = 1; i < 9999; i++) {
-        if((i*i) > num) return i-1;
+      int i = 0;
+      bool found = false;
+      while(!found) {
+        if((i*i) > num) { 
+          found = true;
+        }
+        i++;
       }
-      return 0;
+      return i-1;
     }
 
     //function to return squareroot used for standard deviation
