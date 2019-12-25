@@ -104,6 +104,10 @@ template <typename E> class statlist{
       return mean;
     }
 
+    double get_median() {
+      return median;
+    }
+
     double get_SD() {
       return standard_dev;
     }
