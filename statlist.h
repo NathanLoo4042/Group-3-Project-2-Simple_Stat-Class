@@ -41,6 +41,27 @@ template <typename E> class statlist{
       return nonvalue;
     }
 
+        //function to get index of number that's already in data
+    int getRealIndex(const E& it) {
+      for(int i = 0; i < data.size(); i++) {
+        if(data[i].first == it) {
+          return i;
+        }
+      }
+      return -1;
+    }
+
+    int getFictIndex(const E& it) {
+      int count = 0;
+      for(int i = 0; i < data.size(); i++) {
+        if(data[i].first == it) {
+          return count;
+        }
+        count += data[i].second;
+      }
+      return -1;
+    }
+
     void updateStats() {
       updateMean();
       updateMode();
@@ -164,22 +185,15 @@ template <typename E> class statlist{
     //search function returns a pair<int,int>
     //p.first = index, p.second = count
     pair<int,int> search(const E& it) {
-      int idx = getIndex(it);
-      int count;
-      if(idx == -1) count = 0;
-      else count = data[idx].second;
-      pair<int,int> p(idx,count);
-      return p;
-    }
-
-    //function to get index of number that's already in data
-    int getIndex(const E& it) {
-      for(int i = 0; i < data.size(); i++) {
-        if(data[i].first == it) {
-          return i;
-        }
+      int ridx = getRealIndex(it);
+      int fidx = -1;
+      int count = 0;
+      if(ridx != -1) {
+        count = data[ridx].second;
+        fidx = getFictIndex(it);
       }
-      return -1;
+      pair<int,int> p(fidx,count);
+      return p;
     }
 
     //function to print out statlist
@@ -253,7 +267,7 @@ template <typename E> class statlist{
     void append(const E& it) {
       //if element already exists increment count(pair.second)
       if(exists(it)) {
-        int idx = getIndex(it);
+        int idx = getRealIndex(it);
         data[idx].second++;
       }
       //if element doesn't exist create a new pair and add into list
@@ -271,7 +285,7 @@ template <typename E> class statlist{
 
     //removes count number of elements of the value key
     void removen(const E& key, int count) {
-      int index = getIndex(key);
+      int index = getRealIndex(key);
       if (index >= 0) {
         //if the number equals the count to remove, remove that element entirely
         if (data[index].second == count) {
