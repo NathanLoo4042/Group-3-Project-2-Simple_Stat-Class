@@ -86,14 +86,30 @@ template <typename E> class statlist{
       }
     }
 
-    //get the max(last element)
+  //get the max(last element)
     E get_max() {
-      return data[length-1].first;
+      if(data.size()!=0) return data[length-1].first;
+      try{
+        if(data.size()==0){
+          throw 1;
+        }
+      } catch(int e) {
+        cout << "no maximum" << endl;
+      }
+      return 0;
     }
 
     //get min (first element)
     E get_min() {
-      return data[0].first;
+      if(data.size()!=0)return data[0].first;
+      try{
+        if(data.size()==0){
+          throw 1;
+        }
+      } catch(int e) {
+        cout << "no minimum" << endl;
+      }
+      return 0;
     }
 
     double get_mode() {
@@ -102,6 +118,10 @@ template <typename E> class statlist{
 
     double get_mean() {
       return mean;
+    }
+
+    double get_median() {
+      return median;
     }
 
     double get_SD() {
@@ -233,8 +253,29 @@ template <typename E> class statlist{
       return avg;
     }
 
-    // todo: removen (Remove N number of an element)
-    // todo: empty (Clear entire data set)
+    //removes count number of elements of the value key
+    void removen(E& key, int count) {
+      int index = getIndex(key);
+      if (index >= 0) {
+        //if the number equals the count to remove, remove that element entirely
+        if (data[index].second == count) {
+          data.erase(index);
+          updateStats();
+        }
+        //otherwise, just remove that many from it
+        else if (data[index].second > count) {
+          data[index].second -= count;
+          updateStats();
+        }
+        //doesn't update if the number of data elements < count to remove
+      }
+    }
+
+    //clears entire data set using method in vector class
+    void empty() {
+      data.clear();
+      mean = mode = median = standard_dev = length = total = 0;
+    }
     
 };
 
