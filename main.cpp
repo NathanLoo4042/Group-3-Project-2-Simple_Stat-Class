@@ -3,22 +3,6 @@
 #include <iostream>
 
 template <typename R>
-void printlessstats(statlist<R> printlist)
-{
-    // Testing all O(1) getters except get_min, get_max, and printStat
-    std::cout << "Printing statlist data: \n";
-    printlist.printData();
-    std::cout << "Manually checking stats:"
-            << "\n\tMean: " << printlist.get_mean()
-            << "\n\tMedian: " << printlist.get_median()
-            << "\n\tMode: " << printlist.get_mode()
-            << "\n\tStandard Deviation: " << printlist.get_SD()
-            << "\n\tUnique Elements: " << printlist.length_unique()
-            << "\n\tTotal Elements: " << printlist.length_total()
-            << std::endl;
-}
-
-template <typename R>
 void printstats(statlist<R> printlist)
 {
     // Testing all O(1) getters except printStat
@@ -43,7 +27,7 @@ int main(int argc, char const *argv[])
     statlist<int> emptylist;
     // Testing printStat
     emptylist.printStat();
-    printlessstats(emptylist);
+    printstats(emptylist);
     // Testing appending to empty statlist
     std::cout << "\n**** Testing one append ****\n";
     emptylist.append(20);
@@ -85,12 +69,17 @@ int main(int argc, char const *argv[])
     std::cout << "\n**** Testing invalid removal ****\n";
     emptylist.removen(10, 1);
     printstats(emptylist);
+    std::cout << "\n**** Testing clear ****\n";
+    emptylist.empty();
+    emptylist.printStat();
+    printstats(emptylist);
     // Initializing randomizer
     Random_data<int> randomizer;
     // Testing creation of a very full statlist
-    std::cout << "\n**** Creating very full statlist ****\n";
+    std::cout << "\n**** Creating very full statlist using constructor ****\n";
     std::vector<int> testtenk = randomizer.get_random_vector(10000, -50, 50);
     statlist<int> veryfulllist(testtenk);
+    veryfulllist.printStat();
     printstats(veryfulllist);
 
     return 0;
