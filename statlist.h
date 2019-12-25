@@ -5,13 +5,8 @@
 #include <iostream>
 #include <utility>
 #include <vector>
-// #include <bits/stdc++.h>
-//Unable to build using bits/stdc++.
-//bits/stdc++.h is not in all compilers
-#include <math.h>
-//math.h seems to be on the no-go list
-//On the assignment, in the requirements/restrictions section
-//"You are not allowed to use any C/C++ math libraries"
+#include <algorithm>
+
 using namespace std;
 
 template <typename E> class statlist{
@@ -31,14 +26,14 @@ template <typename E> class statlist{
     statlist(vector<E> input) {
       mean = mode = median = standard_dev = length = total = 0;
       for(int i = 0; i < input.size(); i++)
-        insert(input[i]);      
+        append(input[i]);      
     }
 
     //constructor that takes in array input
     statlist(E input[], int size) {
       mean = mode = median = standard_dev = length = total = 0;
-      for(int i = 0; i < size); i++)
-        insert(input[i]); 
+      for(int i = 0; i < sizeof(input)/sizeof(input[0]); i++)
+        append(input[i]); 
     }
 
     //overloading array access operator
@@ -55,12 +50,16 @@ template <typename E> class statlist{
       return false;
     }
 
-    // (!) todo: update/modify getIndex to Search
-    // search (fastest possible among the choices what we have
-    // discussed in the class): must return the location of the
-    // first occurrence and repetition. For example, if the first
-    // occurrence of data value 20 is 3  and there are 10 of 20s,
-    // then you must return 3 and 10 as the search result of 20
+    //search function returns a pair<int,int>
+    //p.first = index, p.second = count
+    pair<int,int> search(const E& it) {
+      int idx = getIndex(it);
+      int count;
+      if(idx == -1) count = 0;
+      else count = data[idx].second;
+      pair<int,int> p(idx,count);
+      return p;
+    }
 
     //function to get index of number that's already in data
     int getIndex(const E& it) {
@@ -189,10 +188,8 @@ template <typename E> class statlist{
      
     }
 
-    // todo: rename to append for clarity/speciics of the assignment
-
-    //insert
-    void insert(const E& it) {
+    //append a number into data 
+    void append(const E& it) {
       //if element already exists increment count(pair.second)
       if(exists(it)) {
         int idx = getIndex(it);
@@ -209,6 +206,31 @@ template <typename E> class statlist{
       sort(data.begin(),data.end());
       //update statistics
       updateStats();
+    }
+
+    //helper function to for sqrt, finds biggest perfect square that doesn't go over target number
+    int biggestPerfectSquare(double num) {
+      int i = 0;
+      bool found = false;
+      while(!found) {
+        if((i*i) > num) { 
+          found = true;
+        }
+        i++;
+      }
+      return i-1;
+    }
+
+    //function to return squareroot used for standard deviation
+    double sqrt(double num) {
+      double square = biggestPerfectSquare(num);
+      double div = num/square;
+      double avg = (div+square)/2;
+      for(int i = 0; i < 10; i++) {
+        div = num/avg;
+        avg = (avg+div)/2;
+      }
+      return avg;
     }
 
     // todo: removen (Remove N number of an element)
