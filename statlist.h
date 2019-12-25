@@ -194,12 +194,28 @@ template <typename E> class statlist{
 
     //get the max(last element)
     E get_max() {
-      return data[length-1].first;
+      if(data.size()!=0) return data[length-1].first;
+      try{
+        if(data.size()==0){
+          throw 1;
+        }
+      } catch(int e) {
+        cout << "no maximum" << endl;
+      }
+      return 0;
     }
 
     //get min (first element)
     E get_min() {
-      return data[0].first;
+      if(data.size()!=0)return data[0].first;
+      try{
+        if(data.size()==0){
+          throw 1;
+        }
+      } catch(int e) {
+        cout << "no minimum" << endl;
+      }
+      return 0;
     }
 
     double get_mode() {
