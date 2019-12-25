@@ -35,9 +35,9 @@ template <typename E> class statlist{
     }
 
     //constructor that takes in array input
-    statlist(E input[]) {
+    statlist(E input[], int size) {
       mean = mode = median = standard_dev = length = total = 0;
-      for(int i = 0; i < sizeof(input)/sizeof(input[0]); i++)
+      for(int i = 0; i < size); i++)
         insert(input[i]); 
     }
 
