@@ -1,3 +1,8 @@
+// From the software distribution accompanying the textbook
+// "A Practical Introduction to Data Structures and Algorithm Analysis,
+// Third Edition (C++)" by Clifford A. Shaffer.
+// Source code Copyright (C) 2007-2011 by Clifford A. Shaffer."
+
 #ifndef STATLIST_H
 #define STATLIST_H
 //statlist.h
@@ -22,7 +27,7 @@ template <typename E> class statlist{
         //If the item is anywhere in the middle, iterate past each value and keep count
         int count = index;
         for (int i = 0; i < length; i++) {
-          if (data[i].second < count) {
+          if (data[i].second <= count) {
             count -= data[i].second;
           }
           else {
@@ -52,13 +57,13 @@ template <typename E> class statlist{
     }
 
     void updateMode() {
-      int a = 0;
+      int modeindex = 0;
       for(int i = 0; i < length; i++) {
-        if(a < data[i].second) {
-          a = i;
+        if(data[modeindex].second < data[i].second) {
+          modeindex = i;
         }
       }
-      mode = data[a].first;
+      mode = data[modeindex].first;
     }
 
     void updateMedian() {
@@ -265,17 +270,20 @@ template <typename E> class statlist{
     }
 
     //removes count number of elements of the value key
-    void removen(E& key, int count) {
+    void removen(const E& key, int count) {
       int index = getIndex(key);
       if (index >= 0) {
         //if the number equals the count to remove, remove that element entirely
         if (data[index].second == count) {
-          data.erase(index);
+          data.erase(data.begin()+index);
+          length--;
+          total -= count;
           updateStats();
         }
         //otherwise, just remove that many from it
         else if (data[index].second > count) {
           data[index].second -= count;
+          total -= count;
           updateStats();
         }
         //doesn't update if the number of data elements < count to remove
