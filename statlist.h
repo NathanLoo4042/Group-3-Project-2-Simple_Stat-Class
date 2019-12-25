@@ -22,7 +22,7 @@ template <typename E> class statlist{
         //If the item is anywhere in the middle, iterate past each value and keep count
         int count = index;
         for (int i = 0; i < length; i++) {
-          if (data[i].second < count) {
+          if (data[i].second <= count) {
             count -= data[i].second;
           }
           else {
