@@ -16,8 +16,121 @@ template <typename E> class statlist{
     //length is number of unique elements, total is number of elements
     int length, total;
     vector<pair<E, int> > data;
+
+    E &at(int index) {
+      if (index <= total) {
+        //If the item is anywhere in the middle, iterate past each value and keep count
+        int count = index;
+        for (int i = 0; i < length; i++) {
+          if (data[i].second < count) {
+            count -= data[i].second;
+          }
+          else {
+            return data[i].first;
+          }
+        }
+      }
+      //For indices greater than length, return a nonexistant value
+      //todo: make this a thrown exception or something
+      E nonvalue = 0;
+      return nonvalue;
+    }
+
+    void updateStats() {
+      updateMean();
+      updateMode();
+      updateMedian();
+      updateSD();
+    }
+
+    void updateMean() {
+      double sum = 0;
+      for(int i = 0; i < length; i++) {
+        sum += data[i].first * data[i].second;
+      }
+      mean = sum/(double)total;
+    }
+
+    void updateMode() {
+      int a = 0;
+      for(int i = 0; i < length; i++) {
+        if(a < data[i].second) {
+          a = i;
+        }
+      }
+      mode = data[a].first;
+    }
+
+    void updateMedian() {
+      int half = total / 2;
+      if (total == 0){
+        median = 0;
+      }
+      else if (total % 2 == 0){
+        // If the number is even, the value is the mean of two middle elements
+        median = (at(half) + at(half - 1)) / 2;
+      }
+      else
+      {
+        // If the number is odd, the value is the middle element
+        // Integer rounding rounds down and prevents this from getting weird
+        median = at(half);
+      }
+    }
+
+    void updateSD() {
+      double meanDiff[total];
+      int count = 0;
+      //put all numbers and their counts into a single array
+      //loop through pairs
+      for(int i = 0; i < length; i++) {
+        //loop through pair.second
+        for(int j = 0; j < data[i].second; j++) {
+          meanDiff[count] = data[i].first;
+          count++;
+        }
+      }
+      //subtract every number in array by the mean then square the result, then sum them up
+      double squaredDiff = 0;
+      for(int i = 0; i < total; i++) {
+        meanDiff[i] = meanDiff[i] - mean;
+        meanDiff[i] = meanDiff[i] * meanDiff[i];
+        squaredDiff+= meanDiff[i];
+      }
+     
+      //divide the sum by total to find its mean then take square root
+      squaredDiff /= total;
+      squaredDiff = sqrt(squaredDiff);
+      standard_dev = squaredDiff;
+    }
+
+    //helper function to for sqrt, finds biggest perfect square that doesn't go over target number
+    int biggestPerfectSquare(double num) {
+      int i = 0;
+      bool found = false;
+      while(!found) {
+        if((i*i) > num) { 
+          found = true;
+        }
+        i++;
+      }
+      return i-1;
+    }
+
+    //function to return squareroot used for standard deviation
+    double sqrt(double num) {
+      double square = biggestPerfectSquare(num);
+      double div = num/square;
+      double avg = (div+square)/2;
+      for(int i = 0; i < 10; i++) {
+        div = num/avg;
+        avg = (avg+div)/2;
+      }
+      return avg;
+    }
+
   public:
-    //constructor
+    //empty constructor
     statlist() {
       mean = mode = median = standard_dev = length = total = 0;
     }
@@ -29,16 +142,9 @@ template <typename E> class statlist{
         append(input[i]);      
     }
 
-    //constructor that takes in array input
-    statlist(E input[], int size) {
-      mean = mode = median = standard_dev = length = total = 0;
-      for(int i = 0; i < size; i++)
-        append(input[i]); 
-    }
-
     //overloading array access operator
     E &operator[](int index) {
-      return data[index].first;
+      return at(index);
     }
 
     //function to check wheter the number already exists in data
@@ -86,30 +192,14 @@ template <typename E> class statlist{
       }
     }
 
-  //get the max(last element)
+    //get the max(last element)
     E get_max() {
-      if(data.size()!=0) return data[length-1].first;
-      try{
-        if(data.size()==0){
-          throw 1;
-        }
-      } catch(int e) {
-        cout << "no maximum" << endl;
-      }
-      return 0;
+      return data[length-1].first;
     }
 
     //get min (first element)
     E get_min() {
-      if(data.size()!=0)return data[0].first;
-      try{
-        if(data.size()==0){
-          throw 1;
-        }
-      } catch(int e) {
-        cout << "no minimum" << endl;
-      }
-      return 0;
+      return data[0].first;
     }
 
     double get_mode() {
@@ -138,76 +228,6 @@ template <typename E> class statlist{
       return total;
     }
 
-
-    void updateStats() {
-      updateMean();
-      updateMode();
-      updateMedian();
-      updateSD();
-    }
-
-    void updateMean() {
-      double sum = 0;
-      for(int i = 0; i < length; i++) {
-        sum += data[i].first * data[i].second;
-      }
-      mean = sum/(double)total;
-    }
-
-    void updateMode() {
-      int a = 0;
-      for(int i = 0; i < length; i++) {
-        if(a < data[i].second) {
-          a = i;
-        }
-      }
-      mode = data[a].first;
-    }
-
-    void updateMedian() {
-      int half = total / 2;
-      if (total == 0){
-        median = 0;
-      }
-      else if (total % 2 == 0){
-        // If the number is even, the value is the mean of two middle elements
-        median = (data[half].first + data[half - 1].first) / 2;
-      }
-      else
-      {
-        // If the number is odd, the value is the middle element
-        // Integer rounding rounds down and prevents this from getting weird
-        median = data[half].first;
-      }
-    }
-
-    void updateSD() {
-      double meanDiff[total];
-      int count = 0;
-      //put all numbers and their counts into a single array
-      //loop through pairs
-      for(int i = 0; i < length; i++) {
-        //loop through pair.second
-        for(int j = 0; j < data[i].second; j++) {
-          meanDiff[count] = data[i].first;
-          count++;
-        }
-      }
-      //subtract every number in array by the mean then square the result, then sum them up
-      double squaredDiff = 0;
-      for(int i = 0; i < total; i++) {
-        meanDiff[i] = meanDiff[i] - mean;
-        meanDiff[i] = meanDiff[i] * meanDiff[i];
-        squaredDiff+= meanDiff[i];
-      }
-     
-      //divide the sum by total to find its mean then take square root
-      squaredDiff /= total;
-      squaredDiff = sqrt(squaredDiff);
-      standard_dev = squaredDiff;
-     
-    }
-
     //append a number into data 
     void append(const E& it) {
       //if element already exists increment count(pair.second)
@@ -226,31 +246,6 @@ template <typename E> class statlist{
       sort(data.begin(),data.end());
       //update statistics
       updateStats();
-    }
-
-    //helper function to for sqrt, finds biggest perfect square that doesn't go over target number
-    int biggestPerfectSquare(double num) {
-      int i = 0;
-      bool found = false;
-      while(!found) {
-        if((i*i) > num) { 
-          found = true;
-        }
-        i++;
-      }
-      return i-1;
-    }
-
-    //function to return squareroot used for standard deviation
-    double sqrt(double num) {
-      double square = biggestPerfectSquare(num);
-      double div = num/square;
-      double avg = (div+square)/2;
-      for(int i = 0; i < 10; i++) {
-        div = num/avg;
-        avg = (avg+div)/2;
-      }
-      return avg;
     }
 
     //removes count number of elements of the value key
