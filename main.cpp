@@ -1,4 +1,4 @@
-#include "utilities.h"
+#include "randomdata.h"
 #include "statlist.h"
 #include <iostream>
 
@@ -54,6 +54,23 @@ int main(int argc, char const *argv[])
         emptylist.append(20);
     }
     printstats(emptylist);
+    // Testing removal from statlist
+    std::cout << "\n**** Testing small removal ****\n";
+    emptylist.removen(20, 1);
+    printstats(emptylist);
+    std::cout << "\n**** Testing large removal ****\n";
+    emptylist.removen(20, 29);
+    printstats(emptylist);
+    std::cout << "\n**** Testing invalid removal ****\n";
+    emptylist.removen(20, 1);
+    printstats(emptylist);
+    // Initializing randomizer
+    Random_data<int> randomizer;
     // Testing creation of a very full statlist
+    std::cout << "\n**** Creating very full statlist ****\n";
+    std::vector<int> testtenk = randomizer.get_random_vector(10000, -50, 50);
+    statlist<int> veryfulllist(testtenk);
+    printstats(veryfulllist);
+
     return 0;
 }
