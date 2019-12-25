@@ -194,28 +194,12 @@ template <typename E> class statlist{
 
     //get the max(last element)
     E get_max() {
-      if(data.size()!=0) return data[length-1].first;
-      try{
-        if(data.size()==0){
-          throw 1;
-        }
-      } catch(int e) {
-        cout << "no maximum" << endl;
-      }
-      return 0;
+      return data[length-1].first;
     }
 
     //get min (first element)
     E get_min() {
-      if(data.size()!=0)return data[0].first;
-      try{
-        if(data.size()==0){
-          throw 1;
-        }
-      } catch(int e) {
-        cout << "no minimum" << endl;
-      }
-      return 0;
+      return data[0].first;
     }
 
     double get_mode() {
@@ -265,17 +249,20 @@ template <typename E> class statlist{
     }
 
     //removes count number of elements of the value key
-    void removen(E& key, int count) {
+    void removen(const E& key, int count) {
       int index = getIndex(key);
       if (index >= 0) {
         //if the number equals the count to remove, remove that element entirely
         if (data[index].second == count) {
-          data.erase(index);
+          data.erase(data.begin()+index);
+          length--;
+          total -= count;
           updateStats();
         }
         //otherwise, just remove that many from it
         else if (data[index].second > count) {
           data[index].second -= count;
+          total -= count;
           updateStats();
         }
         //doesn't update if the number of data elements < count to remove
